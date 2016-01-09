@@ -1,41 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <style type="text/css">
-
-      html, 
-      body { 
-
-      	height: 100%; 
-      	margin: 0; 
-      	padding: 0; 
-      }
-
-      .wrapper { 
-
-      	width: 90%;
-      	margin: 30px auto 0 auto;
-      }
-
-      #map {
-
-      	width: 100%;
-      	margin-bottom: 30px;
-      }
-
-      #map:before {
-
-      	content: "";
-		display: block;
-		padding-top: 30%;
-      }
-
-      .fieldset {
-
-      	margin-bottom: 5px;
-      }
-
-    </style>
+  	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  	<link rel="stylesheet" type="text/css" href="css/vendor/reset.css">
+  	<link rel="stylesheet" type="text/css" href="css/main.css">
   </head>
   <body>
     
@@ -44,17 +12,45 @@
 	    <div id="map"></div>
 
 	    <div id="form">
+	    	
 	    	<h1>Add an event...</h1>
+	    	
 	    	<div class="fieldset">
-		    	<label for="title">Title: </label>
+		    	<label for="title">Title: </label><br>
 		    	<input type="text" class="title" name="title">
 	    	</div>
+
 	    	<div class="fieldset">
-		    	<label for="address">Address: </label>
-		    	<input type="text" class="address" name="address">
+		    	<label for="event-type">Event Type: </label><br>
+		    	<select class="event-type" name="event-type">
+		    		<option value="meeting">Meeting</option>
+		    		<option value="action">Action</option>
+		    		<option value="appearance">Appearance</option>
+		    	</select>
 	    	</div>
+
 	    	<div class="fieldset">
-		    	<button class="submit">ADD</button>
+		    	<label for="date">Date: </label><br>
+		    	<input type="date" class="date" name="date">
+	    	</div>
+
+	    	<div class="fieldset">
+		    	<label for="time">Time: </label><br>
+		    	<input type="time" class="time" name="time">
+	    	</div>
+
+	    	<div class="fieldset">
+		    	<label for="address">Address: </label><br>
+		    	<textarea type="text" class="address" name="address"></textarea>
+	    	</div>
+
+	    	<div class="fieldset">
+		    	<label for="description">Description: </label><br>
+		    	<textarea type="text" class="description" name="description"></textarea>
+	    	</div>
+
+	    	<div class="fieldset">
+		    	<button class="submit">ADD EVENT</button>
 	    	</div>
 	    </div>
 
@@ -64,10 +60,24 @@
     <script type="text/javascript" src="js/vendor/underscore.min.js"></script>
     <script type="text/javascript" src="js/vendor/backbone.min.js"></script>
 
+    <script type="text/javascript" src="js/events.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
 
     <script async defer
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCZL5G2Cz9TrDUm-24xuQJyzhP5UadLXUg&callback=app.init">
     </script>
+
+    <script type="text/template" id="infowindow-template">
+
+    	<div class="info">
+    		<h4 class="title"><%= title %></h4>
+    		<h4 class="event-type"><%= eventType %></h4>
+    		<p><span class="time"><%= time %></span>, <span class="date"><%= date %></span></p>
+    		<p class="address"><%= address %></p>
+    		<p class="description"><%= description %></p>
+    	</div>
+
+    </script>
+
   </body>
 </html>

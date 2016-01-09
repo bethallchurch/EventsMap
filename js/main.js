@@ -10,6 +10,12 @@ var app = {
 		this.form = new app.Views.Form;
 		this.geocoder = new google.maps.Geocoder();
 
+		seedEvents.forEach(function( seedEvent ) {
+
+			this.map.addPin( seedEvent );
+
+		}.bind( this ));
+
 	}
 
 };
@@ -27,7 +33,7 @@ app.Models.Map = Backbone.Model.extend({
 
 			},
 
-			zoom : 5
+			zoom : 6
 
 		}
 
@@ -55,16 +61,9 @@ app.Views.Map = Backbone.View.extend({
 
 	},
 
-	addPin : function ( address, title ) {
+	addPin : function ( params ) {
 
-		var model = new app.Models.Pin({ 
-			
-			address : address,
-			title : title 
-
-		}); 
-
-		new app.Views.Pin({ model : model });
+		new app.Views.Pin({ model : new app.Models.Pin( params ) });
 
 	}
 
@@ -77,7 +76,48 @@ app.Models.Pin = Backbone.Model.extend({
 		pin : null,
 		address : null,
 		title : null,
-		position : null
+		position : null,
+		iconUrl : null,
+		eventType : null
+
+	},
+
+	initialize : function ( e ) {
+
+		this.setIcon();
+
+	},
+
+	setIcon : function () {
+
+		var eventType = this.get( 'eventType' );
+
+		var baseUrl = 'http://maps.google.com/mapfiles/ms/micons/';
+		var iconUrl;
+		var icon;
+		
+		switch ( eventType ) {
+
+			case 'action' :
+				icon = 'red-dot.png';
+				break;
+
+			case 'meeting' :
+				icon = 'blue-dot.png';
+				break;
+
+			case 'appearance':
+				icon = 'yellow-dot.png';
+				break;
+
+			default:
+				icon = 'red-dot.png';
+
+		}
+
+		iconUrl = baseUrl + icon;
+
+		this.set( 'iconUrl', iconUrl );
 
 	}
 	
@@ -98,6 +138,35 @@ app.Views.Pin = Backbone.View.extend({
 
 	},
 
+	render : function ( position, title ) {
+
+		var pin = new google.maps.Marker({ 
+
+			map : app.map.map,
+			position : this.model.get('position'), 
+			title : this.model.get('title'),
+			icon : this.model.get( 'iconUrl' ) 
+
+		});
+
+		var infoWindow = this.createInfoWindow();
+
+		pin.addListener( 'mouseover', function ( e ) {
+
+			infoWindow.open( app.map.map, pin );
+
+		});
+
+		pin.addListener( 'mouseout', function ( e ) {
+
+			infoWindow.close();
+
+		});
+
+		this.model.set({ pin : pin });
+
+	},
+
 	getPosition : function ( address ) {
 
 		app.geocoder.geocode({ address : address }, function(results, status) {
@@ -105,7 +174,7 @@ app.Views.Pin = Backbone.View.extend({
 			if ( status === google.maps.GeocoderStatus.OK ) {
 
 			    this.model.set( 'position', results[0].geometry.location );
-			    this.render( this.model.get('position'), this.model.get('title') );
+			    this.render();
 
 			} else {
 
@@ -117,15 +186,28 @@ app.Views.Pin = Backbone.View.extend({
 
 	},
 
-	render : function ( position, title ) {
+	createInfoWindow : function () {
 
-		var pin = new google.maps.Marker({ 
+		var data = { 
 
-			map : app.map.map,
-			position : position, 
-			title : title 
+			title : this.model.get( 'title' ), 
+			description : this.model.get( 'description' ),
+			time : this.model.get( 'time' ),
+			date : this.model.get( 'date' ),
+			eventType : this.model.get( 'eventType' ),
+			address : this.model.get( 'address' ),
+
+		};
+
+		var template = _.template( $( '#infowindow-template' ).html() );
+
+		var infoWindow = new google.maps.InfoWindow({
+
+			content: template( data )
 
 		});
+
+		return infoWindow;
 
 	}
 
@@ -143,12 +225,18 @@ app.Views.Form = Backbone.View.extend({
 
 	onSubmit : function ( e ) {
 
-		console.log('hello')
+		var params = {
 
-		var address = this.$( '.address' ).val();
-		var title = this.$( '.title' ).val();
+			date        : this.$( '.date' ).val(),
+			time        : this.$( '.time' ).val(),
+			title       : this.$( '.title' ).val(),
+			address     : this.$( '.address' ).val(),
+			eventType   : this.$( '.event-type' ).val(),
+			description : this.$( '.description' ).val(),
 
-		app.map.addPin( address, title );
+		};
+
+		app.map.addPin( params );
 
 	}
 

@@ -1,0 +1,76 @@
+* {
+      box-sizing: border-box;
+}
+
+html, 
+body { 
+      font-family: 'Open Sans', sans-serif;
+	margin: 0; 
+	padding: 0; 
+}
+
+.wrapper { 
+      margin: auto;
+      padding: 30px 0;
+      position: relative;
+      width: 90%;
+}
+
+#map {
+	width: 100%;
+}
+
+#map:before {
+	content: "";
+	display: block;
+	padding-top: 50%;
+}
+
+#form {
+      background-color: rgba(189, 195, 199, 0.7);
+      padding: 10px 20px;
+	position: absolute;
+	top: 78px;
+	left: 10px;
+}
+
+#form h1 {
+      font-size: 110%;
+      font-weight: 700; 
+      margin-bottom: 15px;    
+}
+
+.fieldset {
+	margin-bottom: 10px;
+}
+
+.fieldset label {
+      line-height: 120%;
+}
+
+.fieldset textarea {
+      min-width: 300px;
+      min-height: 100px;
+}
+
+.fieldset input,
+.fieldset select {
+      font-family: inherit;
+      width: 60%;
+}
+
+.fieldset .submit {
+      background-color: #2ecc71;
+      border: none;
+      color: #FFFFFF;
+      cursor: pointer;
+      display: block;
+      font-size: 80%;
+      margin: auto;
+      padding: 5px 8px;
+}
+
+.fieldset .submit:hover {
+      background-color: #27ae60;
+}
+
